@@ -8,6 +8,8 @@
  * To get debug output on stderr, run with '-v'.
  */
 
+#define _GNU_SOURCE
+
 #include <assert.h>
 #include <errno.h>
 #include <getopt.h>
@@ -105,8 +107,10 @@ void handle_signal(int signum) {
                 DEBUG("A child with PID %d exited with exit status %d.\n", killed_pid, exit_status);
             } else {
                 assert(WIFSIGNALED(status));
-                exit_status = 128 + WTERMSIG(status);
-                DEBUG("A child with PID %d was terminated by signal %d.\n", killed_pid, exit_status - 128);
+                int const signal = WTERMSIG(status);
+                exit_status = 128 + signal;
+                DEBUG("A child with PID %d was terminated by signal %d.\n", killed_pid, signal);
+                fprintf(stderr, "Program terminated with signal SIG%s (%d)\n", sigabbrev_np(signal), signal);
             }
 
             if (killed_pid == child_pid) {
