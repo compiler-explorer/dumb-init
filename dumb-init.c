@@ -181,37 +181,6 @@ void set_rewrite_to_sigstop_if_not_defined(int signum) {
 }
 
 char **parse_command(int argc, char *argv[]) {
-    int opt;
-    struct option long_options[] = {
-        {"help",         no_argument,       NULL, 'h'},
-        {"single-child", no_argument,       NULL, 'c'},
-        {"rewrite",      required_argument, NULL, 'r'},
-        {"verbose",      no_argument,       NULL, 'v'},
-        {"version",      no_argument,       NULL, 'V'},
-        {NULL,                     0,       NULL,   0},
-    };
-    while ((opt = getopt_long(argc, argv, "+hvVcr:", long_options, NULL)) != -1) {
-        switch (opt) {
-            case 'h':
-                print_help(argv);
-                exit(0);
-            case 'v':
-                debug = 1;
-                break;
-            case 'V':
-                fprintf(stderr, "dumb-init v%.*s", VERSION_len, VERSION);
-                exit(0);
-            case 'c':
-                use_setsid = 0;
-                break;
-            case 'r':
-                parse_rewrite_signum(optarg);
-                break;
-            default:
-                exit(1);
-        }
-    }
-
     if (optind >= argc) {
         fprintf(
             stderr,
